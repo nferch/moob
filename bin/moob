@@ -50,7 +50,7 @@ OptionParser.new do |opts|
     options[:params]=a.inject({}) { |r, i| s=i.split('='); r[s[0]]=s[1]; r}
   end
 
-  opts.on '-g', '--arg g', String, 'Argument for exec command' do |a|
+  opts.on '-g', '--arg "racadm help"', String, 'Arguments for exec action' do |a|
     options[:arg] = a
   end
 
