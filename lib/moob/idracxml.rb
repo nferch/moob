@@ -37,9 +37,6 @@ class IdracXml < BaseLom
 
   def authenticate
     @session.handle_cookies nil
-    start = @session.get 'start.html'
-    raise ResponseError.new start unless start.status == 200
-
     auth = @session.post 'cgi-bin/login',
       "<?xml version='1.0'?><LOGIN><REQ><USERNAME>#{@username}</USERNAME><PASSWORD>#{@password}</PASSWORD></REQ></LOGIN>"
     raise ResponseError.new auth unless auth.status == 200
@@ -48,7 +45,7 @@ class IdracXml < BaseLom
     @sid = $1
     @session.headers['Cookie'] = "sid=#{@sid}"
     raise 'Cannot find auth result' unless $&
-    raise "Auth failed with: \"#{auth.body}\"" unless $1.to_i > 0
+    raise "Auth failed with: \"#{auth.body}\"" unless $1.to_i != 0
     return self
   end
 
@@ -94,17 +91,18 @@ class IdracXml < BaseLom
 
     raise "Cannot find RC XML node" unless rc_xml
 
-    rc = rc_xml.first.content
+    rc_s = rc_xml.first.content
 
-    puts rc
+    rc = Integer(rc_s)
 
     output_xml = out_xml.xpath("//CMDOUTPUT")
 
     raise "Cannot find output XML node" unless output_xml
 
+    if rc != 0
+      Moob.warn "exec returned rc #{rc}"
+    end
     puts output_xml.first.content
-    Moob.inform "foo"
-    Moob.inform req.body
     return nil
   end
 
