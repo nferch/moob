@@ -21,6 +21,7 @@ Gem::Specification.new do |s|
 
   s.add_dependency 'patron', '~> 0.4.14'
   s.add_dependency 'json', '~> 1.5.3'
+  s.add_dependency 'nokogiri'
 
   s.files        = Dir.glob("{bin,lib}/**/*") + %w(COPYING)
   s.executables  = ['moob']
